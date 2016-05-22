@@ -10,8 +10,9 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.ChangeImageTransform;
 import android.util.Log;
-import android.view.View;
+import android.view.Window;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -34,9 +35,11 @@ public class ArticleDetailActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+//            getWindow().getDecorView().setSystemUiVisibility(
+//                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+//                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+            getWindow().setExitTransition(new ChangeImageTransform());
         }
         setContentView(R.layout.activity_article_detail);
 

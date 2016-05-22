@@ -25,6 +25,7 @@
 
             <ImageView
                 android:id="@+id/photo"
+                android:transitionName="image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
@@ -36,6 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackground"
+                android:transitionName="title"
                 app:layout_collapseMode="pin">
 
             </android.support.v7.widget.Toolbar>
