@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ShareCompat;
@@ -14,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +50,7 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     public static ArticleDetailFragment newInstance(long itemId) {
+        Log.d(TAG, String.format("newInstance (%s)", itemId));
         Bundle arguments = new Bundle();
         arguments.putLong(ARG_ITEM_ID, itemId);
         ArticleDetailFragment fragment = new ArticleDetailFragment();
@@ -62,11 +61,12 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate()");
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
+            Log.d(TAG, String.format("\tid = %s", mItemId));
         }
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -82,7 +82,8 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView()");
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
@@ -102,19 +103,20 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     private void bindViews() {
+        Log.d(TAG, "bindViews()");
         if (mRootView == null) {
+            Log.e(TAG, "mRootView is null");
             return;
         }
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.article_title);
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
-        bylineView.setMovementMethod(new LinkMovementMethod());
+//        bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
-        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
         Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
@@ -134,6 +136,7 @@ public class ArticleDetailFragment extends Fragment implements
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                            Log.d("ImageListener", String.format("onResponse, b = %s", b));
                             Bitmap bitmap = imageContainer.getBitmap();
                             if (bitmap != null) {
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
@@ -142,14 +145,17 @@ public class ArticleDetailFragment extends Fragment implements
 
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
+                            Log.d("ImageListener", String.format("onErrorResponse : %s", volleyError));
 
                         }
                     });
+            Log.i(TAG, String.format("bindViews() finished successfully ?\n\tmItemId = %s\n\t(%s) \n\t[%s...]",mItemId, bodyView, bodyView.getText().subSequence(0, 20)));
         } else {
             mRootView.setVisibility(View.GONE);
             collapsingToolbarLayout.setTitle("N/A");
-            bylineView.setText("N/A" );
+            bylineView.setText("N/A");
             bodyView.setText("N/A");
+            Log.w(TAG, "mCursor is null");
         }
     }
 
@@ -160,7 +166,9 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(TAG, "onLoadFinished()");
         if (!isAdded()) {
+            Log.e(TAG, "\tFragment not added");
             if (cursor != null) {
                 cursor.close();
             }
@@ -179,6 +187,7 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        Log.d(TAG, "onLoaderReset()");
         mCursor = null;
         bindViews();
     }

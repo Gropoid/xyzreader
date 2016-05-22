@@ -5,13 +5,12 @@ import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.TypedValue;
+import android.util.Log;
 import android.view.View;
 
 import com.example.xyzreader.R;
@@ -23,6 +22,7 @@ import com.example.xyzreader.data.ItemsContract;
  */
 public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String TAG = ArticleDetailActivity.class.getSimpleName();
 
     private Cursor mCursor;
     private long mStartId;
@@ -44,10 +44,8 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         mPagerAdapter = new MyPagerAdapter(getFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
+        mPager.setOffscreenPageLimit(0);
         mPager.setAdapter(mPagerAdapter);
-        mPager.setPageMargin((int) TypedValue
-                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
-        mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
 
         mPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -73,6 +71,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(TAG, "onLoadFinished");
         mCursor = cursor;
         mPagerAdapter.notifyDataSetChanged();
 
