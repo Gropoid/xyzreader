@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,10 +129,12 @@ public class ArticleDetailFragment extends Fragment implements
                             mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
                             System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
                             DateUtils.FORMAT_ABBREV_ALL).toString()
-                            + " by <font color='#ffffff'>"
+                            + " by "
                             + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                            + "</font>"));
+            ));
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
+            bodyView.setClickable(true);
+            bodyView.setMovementMethod(LinkMovementMethod.getInstance());
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
@@ -149,7 +152,7 @@ public class ArticleDetailFragment extends Fragment implements
 
                         }
                     });
-            Log.i(TAG, String.format("bindViews() finished successfully ?\n\tmItemId = %s\n\t(%s) \n\t[%s...]",mItemId, bodyView, bodyView.getText().subSequence(0, 20)));
+            Log.i(TAG, String.format("bindViews() finished successfully ?\n\tmItemId = %s\n\t(%s) \n\t[%s...]", mItemId, bodyView, bodyView.getText().subSequence(0, 20)));
         } else {
             mRootView.setVisibility(View.GONE);
             collapsingToolbarLayout.setTitle("N/A");
